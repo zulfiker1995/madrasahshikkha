@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>সাইন আপ - MadrasahShikkha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dashboard">
+    <h2>🔐 একাউন্ট তৈরি করুন</h2>
+
+    <form id="signupForm">
+      <label>নাম:</label>
+      <input type="text" id="name" required>
+
+      <label>পদবী:</label>
+      <input type="text" id="designation" required>
+
+      <label>প্রতিষ্ঠানের নাম:</label>
+      <input type="text" id="institution" required>
+
+      <label>মোবাইল নম্বর:</label>
+      <input type="tel" id="phone" required>
+
+      <label>ইমেইল:</label>
+      <input type="email" id="email" required>
+
+      <label>পাসওয়ার্ড:</label>
+      <input type="password" id="password" required>
+
+      <button type="submit">সাইন আপ</button>
+    </form>
+
+    <p>আগে একাউন্ট করেছেন? <a href="login.html">লগ ইন করুন</a></p>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBu8aD0f_V4Q7FISzBlP1dNg5oa8fT4Ap4",
+      authDomain: "madrasahshikkha.firebaseapp.com",
+      projectId: "madrasahshikkha",
+      storageBucket: "madrasahshikkha.firebasestorage.app",
+      messagingSenderId: "874307822205",
+      appId: "1:874307822205:web:1ba3cdca0dcfbb1fda0714",
+      measurementId: "G-EPXMRC07BY"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const designation = document.getElementById("designation").value.trim();
+      const institution = document.getElementById("institution").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Send email verification
+        await sendEmailVerification(user);
+
+        // Save user profile to Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          name,
+          designation,
+          institution,
+          phone,
+          email,
+          createdAt: new Date()
+        });
+
+        alert("✅ একাউন্ট তৈরি হয়েছে! অনুগ্রহ করে ইমেইল চেক করে ভেরিফাই করুন।");
+        window.location.href = "login.html";
+      } catch (error) {
+        alert("❌ সমস্যা হয়েছে: " + error.message);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>নতুন পোস্ট যোগ করুন - মাদ্রাসাশিক্ষা ডট কম</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="add-post.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>ড্যাশবোর্ড</h2>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="dashboard.html">ওভারভিউ</a></li>
+        <li class="active"><a href="add-post.html">পোস্ট ম্যানেজ</a></li>
+        <li><a href="#">কোর্স ম্যানেজ</a></li>
+        <li><a href="#">ছাত্র-ছাত্রী</a></li>
+        <li><a href="#">মন্তব্য</a></li>
+        <li><a href="#">সেটিংস</a></li>
+        <li><a href="index.html">ওয়েবসাইটে ফিরে যান</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1>নতুন পোস্ট যোগ করুন</h1>
+      </header>
+
+      <section class="post-form-container">
+        <form class="post-form">
+          <div class="form-group">
+            <label for="post-title">পোস্টের শিরোনাম</label>
+            <input type="text" id="post-title" name="post-title" placeholder="এখানে শিরোনাম লিখুন" required>
+          </div>
+
+          <div class="form-group">
+            <label for="post-content">বিস্তারিত লিখুন</label>
+            <textarea id="post-content" name="post-content" rows="12" placeholder="আপনার পোস্টের বিস্তারিত এখানে লিখুন..."></textarea>
+          </div>
+
+          <div class="form-group-inline">
+            <div class="form-group">
+                <label for="post-author">লেখক</label>
+                <input type="text" id="post-author" name="post-author" value="জুলফিকার রহমান" required>
+            </div>
+            <div class="form-group">
+                <label for="post-category">ক্যাটাগরি</label>
+                <select id="post-category" name="post-category">
+                  <option value="dakhil">দাখিল</option>
+                  <option value="alim">আলিম</option>
+                  <option value="fazil">ফাজিল</option>
+                  <option value="kamil">কামিল</option>
+                  <option value="general">সাধারণ</option>
+                </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="post-image">ফিচার্ড ইমেজ (ছবি)</label>
+            <input type="file" id="post-image" name="post-image" accept="image/*">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-btn">পাবলিশ করুন</button>
+            <button type="button" class="draft-btn">ড্রাফট হিসেবে সংরক্ষণ</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+  <script>
+  // ফর্ম এলিমেন্ট সিলেক্ট করা
+  const postForm = document.querySelector('.post-form');
+
+  postForm.addEventListener('submit', function(event) {
+    event.preventDefault(); // ফর্মের ডিফল্ট সাবমিট বন্ধ করা
+
+    // ফর্ম থেকে ডেটা সংগ্রহ করা
+    const title = document.getElementById('post-title').value;
+    const content = document.getElementById('post-content').value;
+    const author = document.getElementById('post-author').value;
+    const category = document.getElementById('post-category').value;
+
+    // একটি নতুন পোস্ট অবজেক্ট তৈরি করা
+    const newPost = {
+      id: 'post_' + Date.now(), // প্রত্যেক পোস্টের জন্য একটি ইউনিক আইডি
+      title: title,
+      content: content,
+      author: author,
+      category: category,
+      createdAt: new Date().toISOString(), // পোস্ট তৈরির সময়
+      fileUrl: 'assets/placeholder.jpg' // আপাতত একটি প্লেসহোল্ডার ইমেজ
+    };
+
+    // localStorage থেকে আগের পোস্টগুলো আনা
+    // যদি কোনো পোস্ট না থাকে, তবে একটি খালি অ্যারে (array) দিয়ে শুরু করা
+    const existingPosts = JSON.parse(localStorage.getItem('posts')) || [];
+
+    // নতুন পোস্টটি অ্যারের শুরুতে যোগ করা (যাতে হোমপেজে নতুন পোস্ট সবার আগে দেখায়)
+    existingPosts.unshift(newPost);
+
+    // আপডেট হওয়া পোস্ট অ্যারে আবার localStorage-এ সেভ করা
+    localStorage.setItem('posts', JSON.stringify(existingPosts));
+
+    // ব্যবহারকারীকে কনফার্মেশন মেসেজ দেখানো
+    alert('পোস্ট সফলভাবে পাবলিশ হয়েছে!');
+
+    // ফর্মটি রিসেট করা
+    postForm.reset();
+    
+    // পাবলিশ করার পর হোমপেজে রিডাইরেক্ট করা
+    window.location.href = 'index.html';
+  });
+</script>
+</body>
+</html>
