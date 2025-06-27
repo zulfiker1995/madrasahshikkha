@@ -9,17 +9,40 @@
     
 </head>
 <body>
-    <header class="site-header">
-        <div class="header-content">
-            <img src="https://placehold.co/50x50/3f51b5/ffffff?text=Logo" alt="Logo" class="logo" /> <!-- Placeholder for logo -->
-            <div class="title-text">
-                <h1>মাদ্রাসাশিক্ষা ডট কম</h1>
-                <p>আধুনিক মাদ্রাসাশিক্ষা প্ল্যাটফর্ম</p>
-            </div>
-        </div>
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-    </header>
+ <header class="site-header"> 
+     
+  <div class="header-content">
+    <img src="assets/logo.jpg" alt="Logo" class="logo" /> <!-- Placeholder for logo -->
+    <div class="title-text">
+      <h1>মাদ্রাসাশিক্ষা ডট কম</h1>
+      <p>আধুনিক মাদ্রাসাশিক্ষা প্ল্যাটফর্ম</p>
+    </div>
+  </div>
+
+  <!-- ✅ সোশ্যাল আইকনস -->
+  <div class="social-icons">
+    <a href="https://facebook.com" target="_blank" aria-label="Facebook">
+      <img src="assets/facebook.png" alt="Facebook" />
+    </a>
+    <a href="https://youtube.com" target="_blank" aria-label="YouTube">
+      <img src="assets/youtube.png" alt="YouTube" />
+    </a>
+    <a href="https://x.com" target="_blank" aria-label="X">
+      <img src="assets/x.png" alt="X" />
+    </a>
+    <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+      <img src="assets/linkedin.png" alt="LinkedIn" />
+    </a>
+  </div>
+<div>
+  
+</header>
+
+<div class="menu-container">
+    <!-- ✅ Hamburger Menu -->
+ <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     <nav>
+      
         <ul id="main-menu">
             <li><a href="about.html">আমাদের সম্পর্কে</a></li>
             <li><a href="mission.html">লক্ষ্য ও উদ্দেশ্য</a></li>
@@ -36,10 +59,13 @@
     <marquee behavior="scroll" direction="left">
         মাদ্রাসাশিক্ষা ডট কম আপনাকে স্বাগতম
     </marquee>
+</div>
+
 
     <div class="container">
         <div class="left">
             <h3>মাদ্রাসা শিক্ষা অধিদপ্তর</h3>
+            <p> মাদ্রাসা শিক্ষা অধিদপ্তরে প্রকাশিত সর্বশেষ নোটিশ সমূহ </p>
             <ul>
                 <li> নতুন ক্লাস রুটিন প্রকাশিত হয়েছে</li>
                 <li> অনলাইন ভর্তি শুরু হয়েছে</li>
@@ -108,6 +134,12 @@
         &copy; 2025 MadrasahShikkha.com | ডিজাইন ও পরিচালনায়: জুলফিকার রহমান
     </footer>
 
-    
+    <script>
+  function toggleMenu() {
+    const menu = document.getElementById("main-menu");
+    menu.classList.toggle("show");
+  }
+</script>
+
 </body>
 </html>
