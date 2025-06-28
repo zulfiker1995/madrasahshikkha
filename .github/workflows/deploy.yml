@@ -1,28 +1,37 @@
-name: 🚀 Deploy to cPanel
+name: Deploy Application
 
 on:
   push:
     branches:
-      - main  # main ব্রাঞ্চে push করলেই ডিপ্লয় হবে
+      - main    # main ব্রাঞ্চে push হলে এই workflow চলবে
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout Repo
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: 🧪 Setup SSH Key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: 🚚 Deploy to cPanel via rsync
-      run: |
-        rsync -avz --delete \
-          --exclude='.git' \
-          --exclude='.github' \
-          ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/${{ secrets.USERNAME }}/public_html/
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          rsync -avz -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" ./dist/ $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH
+          rm private_key.pem
