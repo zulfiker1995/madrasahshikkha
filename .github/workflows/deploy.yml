@@ -1,24 +1,22 @@
-name: 🚀 Deploy PHP to cPanel via SSH
+name: Deploy to cPanel
 
 on:
   push:
     branches:
-      - main
+      - main     # আপনি যেকোনো ব্রাঞ্চ দিতে পারেন
 
 jobs:
-  deploy:
+  ftp-deploy:
+    name: 📤 Upload to cPanel via FTP
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+      - name: 📦 Checkout the code
+        uses: actions/checkout@v3
 
-    - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-
-    - name: Deploy via rsync
-      run: |
-        rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_DIR }}
+      - name: 🚀 Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.CPANEL_FTP_SERVER }}
+          username: ${{ secrets.CPANEL_FTP_USERNAME }}
+          password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          server-dir: /public_html/     # আপনার ওয়েব ফোল্ডার অনুযায়ী ঠিক করুন
