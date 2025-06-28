@@ -3,41 +3,22 @@ name: 🚀 Deploy PHP to cPanel via SSH
 on:
   push:
     branches:
-      - main  # আপনি অন্য ব্রাঞ্চ চাইলে এখানে পরিবর্তন করুন
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout Code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-   - name: 🔐 Setup SSH with Debug
-  run: |
-    echo "Checking if private key exists..."
-    if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-      echo "❌ SSH_PRIVATE_KEY is empty. Please check your GitHub Secrets."
-      exit 1
-    fi
-
-    mkdir -p ~/.ssh
-    echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-    chmod 600 ~/.ssh/id_rsa
-    echo "✅ SSH private key saved."
-
-    # Optional: Check known_hosts
-    echo "Checking SSH_HOST..."
-    if [ -z "${{ secrets.SSH_HOST }}" ]; then
-      echo "❌ SSH_HOST is empty. Please check your GitHub Secrets."
-      exit 1
-    fi
-
-    ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
-
-
-    - name: 🚀 Deploy to cPanel via rsync
+    - name: Setup SSH
       run: |
-        rsync -avz --delete \
-          -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
-          ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_DIR }}
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy via rsync
+      run: |
+        rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_DIR }}
