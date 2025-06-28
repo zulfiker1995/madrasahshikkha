@@ -14,7 +14,7 @@ tml lang="bn">
     <img src="assets/logo.jpg" alt="Logo" class="logo" />
     <div class="title-text">
       <h1>মাদ্রাসাশিক্ষা ডট কম</h1>
-      <p>আধুনিক মাদ্রাসাশিক্ষা প্ল্যাটফর্ম</p>
+      <p>আধুনিক মাদ্রাসাশিক্ষা প্ল্যাটফর্ম  yes </p>
     </div>
   </div>
   <div class="social-icons">
