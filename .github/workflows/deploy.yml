@@ -1,9 +1,9 @@
-name: 🚀 PHP Deploy to cPanel
+name: 🚀 Deploy PHP to cPanel via SSH
 
 on:
   push:
     branches:
-      - main
+      - main  # আপনি অন্য ব্রাঞ্চ চাইলে এখানে পরিবর্তন করুন
 
 jobs:
   deploy:
@@ -18,8 +18,18 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-    - name: 🚀 Deploy to cPanel with rsync
+        # SSH_HOST ফাঁকা হলে ধরা পড়বে
+        if [ -z "${{ secrets.SSH_HOST }}" ]; then
+          echo "❌ SSH_HOST is empty. Please check your GitHub Secrets."
+          exit 1
+        fi
+
+        # SSH Host Key সংগ্রহ
+        ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+    - name: 🚀 Deploy to cPanel via rsync
       run: |
-        rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_DIR }}
+        rsync -avz --delete \
+          -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+          ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_DIR }}
