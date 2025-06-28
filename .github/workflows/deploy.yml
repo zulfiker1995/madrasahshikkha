@@ -1,22 +1,22 @@
-name: Deploy to cPanel
+name: 🚀 Deploy to cPanel via FTP
 
 on:
   push:
     branches:
-      - main     # আপনি যেকোনো ব্রাঞ্চ দিতে পারেন
+      - main
 
 jobs:
   ftp-deploy:
-    name: 📤 Upload to cPanel via FTP
     runs-on: ubuntu-latest
     steps:
-      - name: 📦 Checkout the code
+      - name: 📥 Checkout the latest code
         uses: actions/checkout@v3
 
-      - name: 🚀 Deploy via FTP
+      - name: 📤 Upload to cPanel via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.CPANEL_FTP_SERVER }}
           username: ${{ secrets.CPANEL_FTP_USERNAME }}
           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
-          server-dir: /public_html/     # আপনার ওয়েব ফোল্ডার অনুযায়ী ঠিক করুন
+          server-dir: /public_html/
+          dangerous-clean-slate: false
