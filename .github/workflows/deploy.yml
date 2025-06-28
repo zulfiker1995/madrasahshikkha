@@ -1,37 +1,25 @@
-name: Deploy Application
+name: Deploy PHP to cPanel via FTP
 
 on:
   push:
     branches:
-      - main    # main ব্রাঞ্চে push হলে এই workflow চলবে
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
+      - name: Sync files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.1.0
         with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Deploy to server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-        
-        run: |
-          echo "$SSH_PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          rsync -avz -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" ./dist/ $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH
-          rm private_key.pem
+          server: ${{ secrets.CPANEL_FTP_SERVER }}
+          username: ${{ secrets.CPANEL_FTP_USERNAME }}
+          password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          protocol: ftp
+          local-dir: './'        # আপনার প্রজেক্ট ফোল্ডার, সাধারণত root
+          server-dir: '/public_html'  # cPanel এর ওয়েবরুট (প্রয়োজন অনুযায়ী বদলাতে পারেন)
+          git-ftp-args: --insecure # SSL সমস্যা এড়াতে
