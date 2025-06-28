@@ -1,0 +1,28 @@
+name: 🚀 Deploy to cPanel
+
+on:
+  push:
+    branches:
+      - main  # main ব্রাঞ্চে push করলেই ডিপ্লয় হবে
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: 🧪 Setup SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+    - name: 🚚 Deploy to cPanel via rsync
+      run: |
+        rsync -avz --delete \
+          --exclude='.git' \
+          --exclude='.github' \
+          ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/${{ secrets.USERNAME }}/public_html/
